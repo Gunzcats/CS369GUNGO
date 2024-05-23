@@ -1,13 +1,11 @@
 const sql = require('mssql');
+const { poolPromise } = require('../config/database');
 
-const userSchema = new sql.Table('users')
-    .columns([
-        { name: 'id', type: sql.Int, nullable: false, primary: true, identity: true },
-        { name: 'username', type: sql.NVarChar(50), nullable: false, unique: true },
-        { name: 'password', type: sql.NVarChar(255), nullable: false },
-    ]);
-
-module.exports = userSchema;
+const userModel = {
+  id: { type: sql.Int, nullable: false, primary: true, identity: true },
+  username: { type: sql.NVarChar(50), nullable: false, unique: true },
+  password: { type: sql.NVarChar(255), nullable: false },
+};
 
 async function createUser(user) {
     try {
@@ -46,5 +44,5 @@ async function createUser(user) {
     }
   }
   
-  module.exports = { userSchema, createUser, getUserByUsername };
+  module.exports = { userModel, createUser, getUserByUsername };
   
