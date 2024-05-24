@@ -14,13 +14,26 @@ function AddNewProduct() {
   });
 
   const handleChange = (e) => {
-    setProduct({ ...product, [e.target.name]: e.target.value });
+    if (e.target.name === 'image') {
+        setProduct({ ...product, image: e.target.files[0] }); // เก็บไฟล์รูปภาพ
+      } else {
+        setProduct({ ...product, [e.target.name]: e.target.value });
+      }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('name', product.name);
+    formData.append('image', product.image); // เพิ่มรูปภาพใน FormData
+    formData.append('price', product.price);
+    formData.append('productDescription', product.productDescription);
+
     try {
-      await axios.post('/api/products', product);
+        await axios.post('/api/products', formData, { // ส่ง FormData แทน object ธรรมดา
+            headers: { 'Content-Type': 'multipart/form-data' } // กำหนด header
+          });
       // handle success, e.g., redirect to product list or show a success message
     } catch (err) {
       // handle error, e.g., show an error message
@@ -39,7 +52,7 @@ function AddNewProduct() {
       </div>
       <div>
         <label htmlFor="image">รูปภาพ:</label>
-        <input type="text" id="image" name="image" value={product.image} onChange={handleChange} />
+        <input type="file" id="image" name="image" value={product.image} onChange={handleChange} />
       </div>
       <div>
         <label htmlFor="price">ราคา:</label>

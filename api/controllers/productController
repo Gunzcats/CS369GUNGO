@@ -4,7 +4,7 @@ exports.createProduct = async (req, res) => {
   try {
     const newProduct = { // สร้าง Object newProduct
       name: req.body.name,
-      image: req.body.image,
+      image: req.file ? req.file.filename : null,
       price: req.body.price,
       productDescription: req.body.productDescription,
     };

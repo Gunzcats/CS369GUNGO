@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
 const authenticateJWT = require('../middleware/authMiddleware'); // ถ้าคุณมี middleware สำหรับตรวจสอบ JWT
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); 
+
 
 // GET /api/products - ดึงข้อมูลสินค้าทั้งหมด
 router.get('/', productController.getAllProducts);
@@ -11,7 +14,7 @@ router.get('/:id', productController.getProductById);
 
 // POST /api/products - สร้างสินค้าใหม่ (ต้อง login ก่อน)
 router.post('/', authenticateJWT, productController.createProduct);
-
+router.post('/', upload.single('image'), productController.createProduct);
 // PUT /api/products/:id - อัปเดตสินค้า (ต้อง login ก่อน)
 // router.put('/:id', authenticateJWT, productController.updateProduct);
 
