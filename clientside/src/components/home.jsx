@@ -8,8 +8,10 @@ function Home() {
 
   const handleLogout = () => {
     logout();
-    navigate('/login'); // หรือหน้าอื่นๆ ที่ต้องการ redirect หลัง logout
+    console.log(isAuthenticated)
   };
+
+  
 
   return (
     <div>
@@ -17,12 +19,19 @@ function Home() {
 
       {/* Conditional rendering ของปุ่ม Login/Logout */}
       {isAuthenticated ? (
+        <div>
         <button onClick={handleLogout}>Logout</button>
+        <Link to="/addProduct">
+          <button>Add Product</button> 
+        </Link>
+      </div>
       ) : (
         <Link to="/login">
           <button>Login</button>
         </Link>
       )}
+
+
     </div>
   );
 }

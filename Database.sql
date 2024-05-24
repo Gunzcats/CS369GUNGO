@@ -9,3 +9,5 @@ CREATE TABLE Products (
   image VARCHAR(255) NOT NULL,
   price DECIMAL(10, 2) NOT NULL
 );
+ALTER TABLE Products
+ADD productDescription TEXT;
