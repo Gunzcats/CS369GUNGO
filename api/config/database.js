@@ -3,13 +3,23 @@ const sql = require('mssql');
 const config = {
     user: process.env.SQL_USER,
     password: process.env.SQL_PASSWORD,
-    server: 'Gunzcats\\SQLSERVER',
-    database: 'master'
+    server: 'localhost\\LocalDB',
+    database: 'master',
+    options: {
+      // encrypt: false, 
+      trustServerCertificate: true, // บังคับให้ Node.js เชื่อถือ self-signed certificate
+    },
   };
 
-  sql.connect(config)
-  .then(pool => {
-    console.log('Connected to MSSQL');
-    global.pool = pool; // สร้าง global pool เพื่อนำไปใช้ในส่วนอื่นๆ ของแอพพลิเคชัน
+  const poolPromise = new sql.ConnectionPool(config)
+  .connect()
+  .then((pool) => {
+    console.log('Connected to MSSQL database');
+    return pool;
   })
-  .catch(err => console.log('Database Connection Failed! Bad Config: ', err));
+  .catch((err) => {
+    console.error('Error connecting to MSSQL database:', err);
+    throw err; // Rethrow the error to handle it elsewhere
+  });
+
+module.exports = { sql, poolPromise };

@@ -2,6 +2,23 @@ const { sql, poolPromise } = require('../config/database'); // เชื่อ�
 const bcrypt = require('bcrypt'); // สำหรับ hash รหัสผ่าน
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
+import React, { createContext, useState, useEffect } from 'react'; // เพิ่ม useEffect ที่นี่
+
+
+useEffect(() => {
+  const storedToken = localStorage.getItem('token');
+  if (storedToken) {
+    try {
+      setToken(storedToken);
+      setUser(jwtDecode(storedToken)); 
+    } catch (error) {
+      if (error instanceof InvalidTokenError) { // ตรวจสอบ error type
+        logout(); // Logout ผู้ใช้ถ้า token ไม่ถูกต้อง
+      }
+    }
+  }
+}, []);
+
 
 const authController = {
   async register(req, res, next) {
@@ -14,9 +31,9 @@ const authController = {
       if (!username || !password) {
         throw new Error('All fields are required');
       }
-      const existingUser = await getUserByUsername(username); // สร้างฟังก์ชันนี้ใน userModel
+      const existingUser = await userModel.getUserByUsername(username); // สร้างฟังก์ชันนี้ใน userModel
         if (existingUser) {
-        throw new Error('Username already exists');
+          return res.status(409).json({ message: `Username already exists ${username}` }); 
     }
 
       // 3. Hash รหัสผ่าน
@@ -50,16 +67,18 @@ const authController = {
 
 
       // 3. ดึงข้อมูลผู้ใช้จากฐานข้อมูล
-      const request = (await poolPromise).request();
-      const result = await request
-      .input('username', sql.NVarChar, username)
-      .query('SELECT * FROM users WHERE username = @username;');
-
-      const user = result.recordset[0];
+      const user = await userModel.getUserByUsername(username);  
 
       // 4. ตรวจสอบรหัสผ่าน
-      if (!user || !(await bcrypt.compare(password, user.password))) {
-        throw new Error('Invalid username or password');
+      if (!user) {
+        const error = new Error('Invalid user');
+        error.statusCode = 401; // Unauthorized
+        throw error; 
+      }
+      if (!(await bcrypt.compare(password, user.password))) {
+        const error = new Error('Invalid credentials');
+        error.statusCode = 401; // Unauthorized
+        throw error; 
       }
 
       // 5. สร้างและส่ง token (ถ้าใช้ JWT)
@@ -68,9 +87,31 @@ const authController = {
       // 6. ตอบกลับ client
       res.json({ message: 'Login successful', user }); // อาจส่งข้อมูลผู้ใช้กลับไปด้วย
     } catch (err) {
-      next(err);
+      console.error('Login error:', err); // log error ที่ชัดเจนขึ้น
+    if (err.message === 'Error getting user from database') {
+      return res.status(500).json({ message: 'Internal server error' }); 
+    }
+    return res.status(500).json({ message: err.message });
     }
   },
+
+  async logout(req, res, next) {
+    try {
+      const token = req.headers.authorization.split(' ')[1]; // ดึง token จาก header
+      // ถอดรหัส token เพื่อดู expiration time
+      const decoded = jwt.decode(token);
+      // คำนวณเวลาที่เหลือ
+      const remainingTime = decoded.exp - Math.floor(Date.now() / 1000); 
+      // สร้าง token ใหม่ที่มี expiration time เหลือน้อยมาก (เช่น 1 วินาที)
+      const newToken = jwt.sign({ userId: decoded.userId }, process.env.JWT_SECRET, { expiresIn: remainingTime + 1 }); 
+      res.json({ message: 'Logout successful', newToken }); // ส่ง token ใหม่กลับไปให้ client
+    } catch (err) {
+      next(err);
+    }
+  }
+
+
+
 };
 
 module.exports = authController;
