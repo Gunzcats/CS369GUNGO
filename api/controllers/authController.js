@@ -2,22 +2,6 @@ const { sql, poolPromise } = require('../config/database'); // เชื่อ�
 const bcrypt = require('bcrypt'); // สำหรับ hash รหัสผ่าน
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
-import React, { createContext, useState, useEffect } from 'react'; // เพิ่ม useEffect ที่นี่
-
-
-useEffect(() => {
-  const storedToken = localStorage.getItem('token');
-  if (storedToken) {
-    try {
-      setToken(storedToken);
-      setUser(jwtDecode(storedToken)); 
-    } catch (error) {
-      if (error instanceof InvalidTokenError) { // ตรวจสอบ error type
-        logout(); // Logout ผู้ใช้ถ้า token ไม่ถูกต้อง
-      }
-    }
-  }
-}, []);
 
 
 const authController = {
