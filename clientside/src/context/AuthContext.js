@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }) => {
   
       // Axios automatically parses JSON responses
       const data = response.data; 
+      
       const token = data?.token;
   
       if (response.status === 200) {

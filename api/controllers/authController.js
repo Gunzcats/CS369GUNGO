@@ -69,7 +69,7 @@ const authController = {
       // ...
       const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
       // 6. ตอบกลับ client
-      res.json({ message: 'Login successful', user }); // อาจส่งข้อมูลผู้ใช้กลับไปด้วย
+      res.json({ message: 'Login successful', user, token }); // อาจส่งข้อมูลผู้ใช้กลับไปด้วย
     } catch (err) {
       console.error('Login error:', err); // log error ที่ชัดเจนขึ้น
     if (err.message === 'Error getting user from database') {

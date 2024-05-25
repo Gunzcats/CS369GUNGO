@@ -34,7 +34,8 @@ async function createProduct(product) {
       .input('name', sql.NVarChar, product.name)
       .input('image', sql.NVarChar, product.image)
       .input('price', sql.Decimal(10, 2), product.price)
-      .query('INSERT INTO Products (name, image, price) VALUES (@name, @image, @price)');
+      .input('description', sql.NVarChar, product.description)
+      .query('INSERT INTO Products (name, image, price,productDescription) VALUES (@name, @image, @price,@description)');
     return result.rowsAffected[0]; // Number of rows affected
   } catch (err) {
     console.error('Error executing query:', err);

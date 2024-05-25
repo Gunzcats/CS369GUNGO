@@ -1,15 +1,45 @@
 const productModel = require('../models/productModel');
+const sql = require('mssql');
+const { poolPromise } = require('../config/database');
+
 
 exports.createProduct = async (req, res) => {
   try {
+    const user = req.user; // ดึงข้อมูล user จาก req.user
+    if (!user) {
+      return res.sendStatus(401); // Unauthorized
+    }
+
     const newProduct = { // สร้าง Object newProduct
       name: req.body.name,
-      image: req.file ? req.file.filename : null,
+      image: req.body.image,
       price: req.body.price,
-      productDescription: req.body.productDescription,
+      description: req.body.description,
     };
     await productModel.createProduct(newProduct); // เรียกใช้ createProduct จาก productModel
     res.status(201).json({ message: 'Product created successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getAllProducts = async (req, res) => {
+  try {
+    const products = await productModel.getAllProducts();
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getProductById = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const product = await productModel.getProductById(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json(product);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

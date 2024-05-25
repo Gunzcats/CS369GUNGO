@@ -11,3 +11,6 @@ CREATE TABLE Products (
 );
 ALTER TABLE Products
 ADD productDescription TEXT;
+
+ALTER TABLE Products
+ALTER COLUMN productDescription TEXT NOT NULL;
