@@ -30,6 +30,7 @@ function AddNewProduct() {
     try {
       const formData = new FormData();
       formData.append("file", product.image);
+      console.log(product.image)
       const res = await axios.post("/api/upload", formData);
       return res.data;
     } catch (err) {
@@ -40,7 +41,7 @@ function AddNewProduct() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const imgUrl = await upload();
-    console.log(product.productDescription)
+    console.log(imgUrl)
     try {
         const token = localStorage.getItem('token');
         console.log(product.image)

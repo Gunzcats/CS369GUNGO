@@ -1,17 +1,31 @@
-import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React,{useEffect, useState } from 'react';
+import { useNavigate, Link, } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext'; // ปรับ path ตามโครงสร้าง project ของคุณ
+import axios from 'axios';
+import ProductCard from './productcard';
 
 function Home() {
   const { isAuthenticated, logout } = useAuthContext();
   const navigate = useNavigate();
-
+  const [products, setProducts] = useState([]);
   const handleLogout = () => {
     logout();
     console.log(isAuthenticated)
   };
 
-  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await axios.get('/api/products');
+        setProducts(res.data);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        // Handle error (เช่น แสดงข้อความแจ้งเตือน)
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   return (
     <div>
@@ -30,7 +44,11 @@ function Home() {
           <button>Login</button>
         </Link>
       )}
-
+    <div className="product-grid">
+      {products.map(product => (
+      <ProductCard key={product.id} product={product} />
+  ))}
+</div>
 
     </div>
   );

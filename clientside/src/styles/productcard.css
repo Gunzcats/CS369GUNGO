@@ -1,0 +1,44 @@
+.product-card {
+    /* เพิ่ม style ตามต้องการ */
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .product-image {
+    /* เพิ่ม style ตามต้องการ */
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .product-name {
+    /* เพิ่ม style ตามต้องการ */
+  }
+  
+  .product-price {
+    /* เพิ่ม style ตามต้องการ */
+    font-weight: bold;
+  }
+  
+  .product-description {
+    /* เพิ่ม style ตามต้องการ */
+  }
+  
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* สร้าง 4 columns ขนาดเท่ากัน */
+    grid-template-rows: repeat(3, auto); /* สร้าง 3 rows ขนาด auto (ปรับตามเนื้อหา) */
+    gap: 20px; /* ระยะห่างระหว่าง card */
+  }
+  
+  /* ปรับขนาดรูปภาพใน card */
+  .product-image {
+    max-width: 100%; /* ให้รูปภาพมีขนาดเต็มความกว้างของ column */
+    height: auto; /* ให้รูปภาพปรับความสูงตามสัดส่วน */
+  }
+
+  @media (max-width: 768px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr); /* เปลี่ยนเป็น 2 columns */
+    }
+  }
