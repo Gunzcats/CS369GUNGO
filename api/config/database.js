@@ -3,8 +3,8 @@ const sql = require('mssql');
 const config = {
     user: process.env.SQL_USER,
     password: process.env.SQL_PASSWORD,
-    server: 'localhost\\LocalDB',
-    database: 'master',
+    server: 'localdb.cjmie8ew8cdp.us-east-1.rds.amazonaws.com',
+    database: 'CS369',
     options: {
       // encrypt: false, 
       trustServerCertificate: true, // บังคับให้ Node.js เชื่อถือ self-signed certificate
