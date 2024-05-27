@@ -1,8 +1,11 @@
-import React,{useEffect, useState } from 'react';
+import React,{useEffect, useState} from 'react';
 import { useNavigate, Link, } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext'; // ปรับ path ตามโครงสร้าง project ของคุณ
 import axios from 'axios';
 import ProductCard from './productcard';
+import Header from './header'
+
+import ProductView from './productview';
 
 function Home() {
   const { isAuthenticated, logout } = useAuthContext();
@@ -10,7 +13,6 @@ function Home() {
   const [products, setProducts] = useState([]);
   const handleLogout = () => {
     logout();
-    console.log(isAuthenticated)
   };
 
   useEffect(() => {
@@ -23,33 +25,26 @@ function Home() {
         // Handle error (เช่น แสดงข้อความแจ้งเตือน)
       }
     };
-
     fetchProducts();
   }, []);
 
   return (
-    <div>
+    
+    <div className="min-h-screen bg-gray-50">
       {/* เนื้อหาอื่นๆ ของหน้า Home */}
+      <Header className="grid grid-cols-3 gap-4 w-80 h-16"/>
 
-      {/* Conditional rendering ของปุ่ม Login/Logout */}
-      {isAuthenticated ? (
-        <div>
-        <button onClick={handleLogout}>Logout</button>
-        <Link to="/addProduct">
-          <button>Add Product</button> 
-        </Link>
-      </div>
-      ) : (
-        <Link to="/login">
-          <button>Login</button>
-        </Link>
-      )}
-    <div className="product-grid">
-      {products.map(product => (
-      <ProductCard key={product.id} product={product} />
-  ))}
-</div>
+      
+    <main> 
+       
 
+        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8 px-4">
+            {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </main>
+      
     </div>
   );
 }
